@@ -1,17 +1,26 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 
 const App = () => {
+    const passwordRef = useRef(null)
+    
+    
     const [length, setLength] = useState(8);
     const [numberAllowed, setNumberAllowed] = useState(false);
     const [charAllowed, setCharAllowed] = useState(false);
 
     const [password, setPassword] = useState("");
 
+    const copyPasswordOnClipboard = useCallback(() => {
+        passwordRef.current?.select()
+        window.navigator.clipboard.writeText(password)
+        console.log(password)
+    }, [password]);
+
     const passwordGenerator = useCallback(() => {
         let pass = "";
         let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         if (numberAllowed) str += "1234567890";
-        if (charAllowed) str += "!@#$%^&*()_+-={}|[]\:;<>?,./`~";
+        if (charAllowed) str += "!@#$%^&*()_+-={}|[]:;<>?,./`~";
 
         for (let i = 1; i <= length; i++) {
             let char = Math.floor(Math.random() * str.length + 1);
@@ -35,13 +44,16 @@ const App = () => {
                 <div className="max-w-lg mx-auto shadow-md rounded-lg px-4 my-8 text-blue-800 bg-gray-300">
                     <div className="flex flex-row items-center text-white w-full overflow-hidden mb-4 rounded-lg">
                         <input
-                            className="outline-none bg-white text-gray-700 w-full py-1 px-3"
+                            className="outline-none my-4 bg-white text-gray-700 w-full py-1 px-3"
                             type="text"
                             placeholder="password"
                             readOnly
+                            ref={passwordRef}
                             value={password}
                         />
-                        <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
+                        <button className="outline-none bg-blue-700 text-white px-3 py-1 shrink-0 hover:bg-blue-900"
+                            onClick={copyPasswordOnClipboard}
+                            >
                             Copy
                         </button>
                     </div>
